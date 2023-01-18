@@ -1,27 +1,26 @@
 <?php
-
+    //password_hash('1111',PASSWORD_DEFAULT);
 class Usuari{
 
     protected int $idUser=-1;
-    protected string $email="";
+    protected string $username="";
     protected string $pass="";
     protected ?string $role="";
 
-    public function loadUser($email,$pass,$database)
+    public function loadUser($username,$pass,$database)
     {
         
-        $sql     = "SELECT * FROM users where email=:email limit 1";
+        $sql     = "SELECT * FROM users where username=:username limit 1";
         $dataset = $database->prepare($sql);
-        $dataset->execute([':email'=>$email]);
+        $dataset->execute([':username'=>$username]);
 
         $row=$dataset?$dataset->fetch(PDO::FETCH_ASSOC):false;
 
-        if($row && $row['pass']==$pass)
+        if($row && password_verify($row['passHash'],$pass))
         {
           $this->email=$row['email'];
-          $this->pass=$row['pass'];
-          $this->role=$row['role'];
-          $this->idUser=$row['idUser'];
+          $this->pass=$row['passHash'];
+          $this->idUser=$row['iduser'];
         }
     }
 
